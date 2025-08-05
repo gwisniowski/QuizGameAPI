@@ -34,7 +34,7 @@ namespace AuthApi.Controllers
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
-                return BadRequest("Email i hasło są wymagane.");
+                return BadRequest("Wszystkie pola są wymagane.");
 
             if (dto.Password != dto.ConfirmPassword)
                 return BadRequest("Hasła nie są zgodne.");
@@ -47,6 +47,7 @@ namespace AuthApi.Controllers
 
             var user = new UserProfile
             {
+                UserName = dto.UserName,
                 Email = dto.Email,
                 PasswordHash = hashedPassword
             };
@@ -114,6 +115,7 @@ namespace AuthApi.Controllers
               return Ok(new 
                 { 
                     user.Email, 
+                    user.UserName
                    
                 });
 
