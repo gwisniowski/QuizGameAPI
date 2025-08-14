@@ -50,6 +50,7 @@ namespace AuthApi.Controllers
                 UserName = dto.UserName,
                 Email = dto.Email,
                 PasswordHash = hashedPassword
+              
             };
 
             _context.UserProfiles.Add(user);
@@ -115,20 +116,18 @@ namespace AuthApi.Controllers
               return Ok(new 
                 { 
                     user.Email, 
-                    user.UserName
-                   
-                });
+                    user.UserName,
+                    user.CompletedQuizes,
+                    user.LastResult
+
+              });
 
             }
 
 
         }
 
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            return Ok("Działa");
-        }
+      
 
     }
 }

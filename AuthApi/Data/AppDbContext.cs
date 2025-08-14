@@ -11,5 +11,7 @@ namespace AuthApi.Data
             : base(options) { }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
     }
 }
