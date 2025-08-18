@@ -127,7 +127,39 @@ namespace AuthApi.Controllers
 
         }
 
-      
+        [Authorize]
+        [HttpPut("update-result")]
+
+
+        public async Task<IActionResult> UpdateResult([FromBody] UpdateResultDto dto)
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("Brak ID użytkownika w tokenie");
+
+
+            var user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
+            if (user == null)
+                return NotFound("Nie znaleziono profilu użytkownika");
+
+            user.LastResult = dto.LastResult;
+            user.CompletedQuizes += 1;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Wynik zaktualizowany",
+                lastResult = user.LastResult,
+                completedQuizes = user.CompletedQuizes
+            });
+
+
+
+        }
+
+
 
     }
 }

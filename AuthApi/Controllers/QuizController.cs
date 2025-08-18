@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 
 namespace AuthApi.Controllers
 {
 
     [ApiController]
     [Route("api/[controller]")]
-    public class QuizController: ControllerBase
+    public class QuizController : ControllerBase
     {
         private readonly AppDbContext _db;
         public QuizController(AppDbContext db)
@@ -19,7 +20,7 @@ namespace AuthApi.Controllers
         }
 
         [HttpGet("random")]
-      [Authorize]
+        [Authorize]
 
         public IActionResult GetRandomQuestion() {
 
@@ -46,7 +47,7 @@ namespace AuthApi.Controllers
 
         [HttpPost("{id}/check")]
         [Authorize]
-        public IActionResult CheckAnswer(int id, [FromBody] int answerId) 
+        public IActionResult CheckAnswer(int id, [FromBody] int answerId)
         {
             var answer = _db.Answers.FirstOrDefault(a => a.Id == answerId && a.QuestionId == id);
 
@@ -62,6 +63,11 @@ namespace AuthApi.Controllers
 
         }
 
+
         
+
+
+
+
     }
 }
