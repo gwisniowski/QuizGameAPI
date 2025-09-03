@@ -105,6 +105,8 @@ namespace AuthApi.Controllers
             var userId = userIdClaim.Value;
 
             var user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+           
+
 
             if (user == null)
             {
@@ -113,14 +115,20 @@ namespace AuthApi.Controllers
             }
             else 
             {
-              return Ok(new 
+                var isAdmin = await _context.Admins.AnyAsync(a => a.UserId == user.Id);
+               
+                return Ok(new 
                 { 
                     user.Email, 
                     user.UserName,
                     user.CompletedQuizes,
-                    user.LastResult
+                    user.LastResult,
+                    user.CreatedAt,
+                    user.AvatarIndex,
+                    isAdmin,
 
-              });
+                 
+                });
 
             }
 
@@ -156,6 +164,27 @@ namespace AuthApi.Controllers
             });
 
 
+
+        }
+
+        [Authorize]
+        [HttpPatch("avatar")]
+
+        public async Task<IActionResult> ChangeAvatar([FromBody] int avatarIndex) 
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized("Brak ID użytkownika w tokenie");
+
+            var user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
+            if (user == null)
+                return NotFound("Nie znaleziono profilu użytkownika");
+
+            user.AvatarIndex = avatarIndex;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Avatar updated", avatarIndex = user.AvatarIndex });
 
         }
 

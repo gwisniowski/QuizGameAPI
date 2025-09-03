@@ -64,7 +64,47 @@ namespace AuthApi.Controllers
         }
 
 
-        
+        [HttpPost("question")]
+
+        public async Task<IActionResult> AddQuestion([FromBody] AddQuestion dto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var isAdmin = await _db.Admins.AnyAsync(a => a.UserId == userId);
+
+            if (!isAdmin)
+                return Forbid();
+
+
+
+            var isExisting = await _db.Questions.AnyAsync(q => q.QuestionText == dto.QuestionText);
+
+            if (isExisting)
+                return BadRequest(new { message = "Pytanie już istnieje" });
+
+            var question = new Question
+            {
+                QuestionText = dto.QuestionText,
+                Answers = dto.Answers.Select(a => new Answer
+                {
+                    AnswerText = a.AnswerText,
+                    IsCorrect = a.IsCorrect
+                }).ToList()
+            };
+
+            _db.Questions.Add(question);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Dodano pytanie" });
+
+
+        }
+
+
+
+
+
+
+
 
 
 

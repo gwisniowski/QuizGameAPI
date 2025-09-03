@@ -13,5 +13,12 @@ namespace AuthApi.Data
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
+
+        public DbSet<Admin> Admins { get; set; }
+
+
     }
 }
+
+
+
