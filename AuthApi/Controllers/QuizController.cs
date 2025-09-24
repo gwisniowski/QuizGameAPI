@@ -101,7 +101,50 @@ namespace AuthApi.Controllers
 
 
 
+        [HttpGet("lastTen")]
+        public async Task<ActionResult<IEnumerable<QuizResults>>> GetLast10Results()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            int.TryParse(userIdClaim, out var userId);
+            var results = await _db.QuizResults
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.ResultDate)
+                .Take(10)
+                .ToListAsync();
+
+            return results;
+
+
+        }
+
+        [Authorize]
+        [HttpPost("addResult")]
+
+        public async Task<IActionResult> AddResults([FromBody] QuizResults result) 
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("UserId not found in token.");
+
+
+            if (result == null)
+            {
+                return BadRequest("Result is null");
+            }
+
+            result.UserId = int.Parse(userIdClaim);
+
+
+            if (result.ResultDate == default)
+                result.ResultDate = DateTime.UtcNow;
+
+            _db.QuizResults.Add(result);
+
+            await _db.SaveChangesAsync();
+            return Ok(result);
+
+        }
 
 
 

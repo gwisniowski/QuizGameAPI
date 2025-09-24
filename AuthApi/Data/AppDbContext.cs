@@ -16,6 +16,7 @@ namespace AuthApi.Data
 
         public DbSet<Admin> Admins { get; set; }
 
+        public DbSet<QuizResults> QuizResults { get; set; }
 
     }
 }
